@@ -1,124 +1,106 @@
-// RankingScreen.js
-import { View, Text, FlatList, ActivityIndicator, ScrollView } from "react-native";
-import { Picker } from "@react-native-picker/picker";
-import { useEffect, useState } from "react";
-import RankingItem from "../../components/RankingItem";
+// src/screens/Violation/ViolationScreen.js
+import { View, Button, ScrollView, Alert, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useState } from "react";
+import ViolationItem from "../../components/ViolationItem";
 
-const mockData = [
-  { id: 1, name: "11B12", week: 36, month: 430, semester: 800, year: 2100, streak: 3 },
-  { id: 2, name: "12A5", week: 67, month: 380, semester: 700, year: 1800, streak: 0 },
-  { id: 3, name: "10C5", week: 110, month: 500, semester: 900, year: 2500, streak: 5 },
-];
+export default function ViolationScreen() {
+  const [items, setItems] = useState([{ id: Date.now() }]);
 
-function calculateRanks(data, mode) {
-  const sorted = [...data].sort((a, b) => b[mode] - a[mode]);
-
-  let ranks = [];
-  let currentRank = 1;
-
-  for (let i = 0; i < sorted.length; i++) {
-    if (i > 0 && sorted[i][mode] < sorted[i - 1][mode]) {
-      currentRank = i + 1;
-    }
-
-    ranks.push({
-      ...sorted[i],
-      rank: currentRank,
-    });
-  }
-
-  return ranks;
-}
-
-export default function RankingScreen() {
-  const [mode, setMode] = useState("week");
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchLeaderboard = async () => {
-    try {
-      const res = await fetch("https://api.com");
-      const json = await res.json();
-      setData(json);
-    } catch (err) {
-      console.log("NON OF DATA");
-      setData(mockData);
-    } finally {
-      setLoading(false);
-    }
+  const addItem = () => {
+    setItems(prev => [...prev, { id: Date.now() }]);
   };
 
-  useEffect(() => {
-    fetchLeaderboard();
-  }, []);
+  const deleteItem = (id) => {
+    setItems(prev => prev.filter(item => item.id !== id));
+  };
 
-  if (loading) {
-    return <ActivityIndicator size="large" style={{ marginTop: 50 }} />;
-  }
-
-  const rankedData = calculateRanks(data, mode);
-  const sorted = [...data].sort((a, b) => b[mode] - a[mode]);
+  const submit = () => {
+    console.log("SUBMIT DATA:", items);
+    Alert.alert("Thành công", "Đã gửi dữ liệu (fake)");
+  };
 
   return (
-    <View style={{ flex: 1, padding: 15, backgroundColor: "#f2f7ff" }}>
-      
-      {/* Header */}
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <Text style={{ fontSize: 22, fontWeight: "bold" }}>Thi Đua 🏆</Text>
-
-        <View
-          style={{
-            marginLeft: "auto",
-            borderWidth: 1,
-            borderRadius: 10,
-            width: 150,
-          }}
-        >
-          <Picker selectedValue={mode} onValueChange={setMode}>
-            <Picker.Item label="Tuần" value="week" />
-            <Picker.Item label="Tháng" value="month" />
-            <Picker.Item label="Học kỳ" value="semester" />
-            <Picker.Item label="Cả năm" value="year" />
-          </Picker>
-        </View>
-      </View>
-
-      {/* Table */}
-      <View
-        style={{
-          flex: 1,
-          marginTop: 10,
-          backgroundColor: "#fff",
-          borderRadius: 20,
-          borderWidth: 3,
-          borderColor: "#3fa9ff",
-          padding: 10,
-        }}
-      >
-        <View style={{ flexDirection: "row", borderBottomWidth: 1 }}>
-          <Text style={styles.header}>Xếp hạng</Text>
-          <Text style={styles.header}>Lớp</Text>
-          <Text style={styles.header}>Tổng điểm</Text>
-        </View>
-
-        <FlatList
-            data={rankedData}
-            keyExtractor={i => i.id.toString()}
-            renderItem={({ item }) => (
-              <RankingItem item={item} mode={mode} />
-            )}
+    <View style={styles.container}>
+      <ScrollView>
+        {items.map((item, index) => (
+          <ViolationItem
+            key={item.id}
+            index={index + 1}
+            id={item.id}
+            onDelete={deleteItem}
+            onChange={(data) => {
+              setItems(prev =>
+                prev.map(i => i.id === item.id ? { ...i, ...data } : i)
+              );
+            }}
           />
+        ))}
+      </ScrollView>
+
+      {/* Add box */}
+      <View style={styles.addBox}>
+        <TouchableOpacity style={styles.addButton} onPress={addItem}>
+          <Text style={{ fontSize: 28, color: "#fff" }}>＋</Text>
+        </TouchableOpacity>
       </View>
+
+      {/* Submit */}
+      <TouchableOpacity style={styles.submitBtn} onPress={submit}>
+        <Text style={styles.submitText}>Gửi</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
-const styles = {
-  header: {
+const styles = StyleSheet.create({
+  container: {
     flex: 1,
-    textAlign: "center",
-    fontWeight: "bold",
-    color: "orange",
-    paddingVertical: 6,
+    backgroundColor: "#EEF6FF",
+    padding: 16,
   },
-};
+
+  header: {
+    backgroundColor: "#4DB3FF",
+    borderRadius: 16,
+    padding: 12,
+    alignItems: "center",
+    marginBottom: 12,
+  },
+
+  headerText: {
+    color: "red",
+    fontSize: 22,
+    fontWeight: "bold",
+  },
+
+  addBox: {
+    backgroundColor: "#4DB3FF",
+    borderRadius: 16,
+    height: 90,
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 12,
+  },
+
+  addButton: {
+    width: 55,
+    height: 55,
+    borderRadius: 30,
+    backgroundColor: "#7EE0C3",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  submitBtn: {
+    alignSelf: "flex-end",
+    backgroundColor: "#FFC83D",
+    paddingHorizontal: 28,
+    paddingVertical: 10,
+    borderRadius: 20,
+  },
+
+  submitText: {
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+});
