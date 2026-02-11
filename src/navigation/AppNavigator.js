@@ -8,6 +8,7 @@ import ViolationScreen from "../screens/violation/ViolationScreen";
 import BehaviorScreen from "../screens/behavior/BehaviorScreen";
 import { useAuthStore } from "../store/authStore";
 import NotificationScreen from "../screens/notification/NotificationScreen";
+import UserScreen from "../screens/user/UserScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -24,6 +25,7 @@ export default function AppNavigator() {
       <Stack.Screen name="Violation" component={ViolationScreen} options={{title:"Vi phạm"}} />
       <Stack.Screen name="Behavior" component={BehaviorScreen} options={{title:"Hạnh kiểm"}} />
       <Stack.Screen name="Notification" component={NotificationScreen} options={{title:"Thông báo"}} />
+      <Stack.Screen name="User" component={UserScreen} options={{title:"Cá nhân"}} />
     </Stack.Navigator>
   );
 }
