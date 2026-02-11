@@ -3,10 +3,7 @@
 npm install
 
 ## Chạy
-npm run dev
-
-## Build
-npm run build
+npx expo start
 ```
 
 ##### Note: branch đặt tên của ai up code lên
