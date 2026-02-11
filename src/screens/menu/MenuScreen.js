@@ -1,36 +1,72 @@
-// src/screens/menu/MenuScreen.js
-import { View, Text, TouchableOpacity } from "react-native";
-
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { useAuthStore } from "../../store/authStore";
 
-
 export default function MenuScreen({ navigation }) {
-    const logout = useAuthStore(state => state.logout);
+  const logout = useAuthStore(state => state.logout);
+
+  const menus = [
+    { title: "User", screen: "User" },
+    { title: "Thi đua", screen: "Ranking" },
+    { title: "Điểm\ndanh", screen: "Attendance" },
+    { title: "Vi\nphạm", screen: "Violation" },
+    { title: "Thông\nbáo", screen: "Notification" },
+    { title: "Xếp\nloại", screen: "Behavior" },
+  ];
+
   return (
-    <View style={{ flex: 1, padding: 20 }}>
-      <TouchableOpacity onPress={() => navigation.navigate("Attendance")}>
-        <Text>Điểm danh</Text>
-      </TouchableOpacity>
+    <ScrollView>
+      <View style={styles.container}>
 
-      <TouchableOpacity onPress={() => navigation.navigate("Ranking")}>
-        <Text>Thi đua</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => navigation.navigate("Violation")}>
-        <Text>Vi phạm</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => navigation.navigate("Behavior")}>
-        <Text>Đánh giá hạnh kiểm</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => navigation.navigate("Notification")}>
-        <Text>Thông báo</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={logout}>
-        <Text>Log out</Text>
-      </TouchableOpacity>
-    </View>
+        <View style={styles.grid}>
+          {menus.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.card}
+              onPress={() => navigation.navigate(item.screen)}
+            >
+              <Text style={styles.cardText}>{item.title}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#EEF5FF",
+    padding: 20,
+  },
+
+  header: {
+    fontSize: 28,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+
+  grid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+
+  card: {
+    width: "47%",
+    height: 150,
+    backgroundColor: "#BFE3FF",
+    borderRadius: 25,
+    borderWidth: 3,
+    borderColor: "#9C6B2F",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+
+  cardText: {
+    fontSize: 22,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+});

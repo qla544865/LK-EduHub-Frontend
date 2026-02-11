@@ -21,12 +21,6 @@ export default function ViolationScreen() {
 
   return (
     <View style={styles.container}>
-      
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Vi Phạm ⚖️</Text>
-      </View>
-
       <ScrollView>
         {items.map((item, index) => (
           <ViolationItem
