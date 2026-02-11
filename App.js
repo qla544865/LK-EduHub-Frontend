@@ -1,15 +1,10 @@
-import { useRef, useState } from "react";
-import { Button, Image, StyleSheet, Text, View } from "react-native";
-import { CameraView, useCameraPermissions } from "expo-camera";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-
-import MainApp from "./components/main";
+import { NavigationContainer } from "@react-navigation/native";
+import AppNavigator from "./src/navigation/AppNavigator";
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <MainApp/>
-    </SafeAreaProvider>
+    <NavigationContainer>
+      <AppNavigator />
+    </NavigationContainer>
   );
 }
-

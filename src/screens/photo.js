@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { Button, Image, StyleSheet, Text, View } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
+import { Platform } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -10,7 +11,7 @@ const styles = StyleSheet.create({
   preview: { flex: 1 },
   controls: {
     paddingVertical: 16,
-    alignItems: "center",
+        alignItems: "center",
   },
   center: {
     flex: 1,
@@ -30,10 +31,10 @@ export default function MainApp() {
 
   if (!camera_permission.granted) {
     return (
-      <SafeAreaView style={styles.center}>
-        <Text>Need camera permission</Text>
-        <Button title="Grant permission" onPress={requestPermission} />
-      </SafeAreaView>
+          <SafeAreaView style={styles.center}>
+            <Text>Need camera permission</Text>
+            <Button title="Grant permission" onPress={requestPermission} />
+          </SafeAreaView>
     );
   }
 
@@ -47,30 +48,31 @@ export default function MainApp() {
   };
 
   const uploadPhoto = async () => {
-    setUploading(true);
+  setUploading(true);
 
-    const formData = new FormData();
+  const formData = new FormData();
+
+  if (Platform.OS === "web") {
+    const res = await fetch(photo.uri);
+    const blob = await res.blob();
+    formData.append("file", blob, "photo.jpg");
+  } else {
     formData.append("file", {
-      uri: photo.uri,
-      name: "photo.jpg",
-      type: "image/jpeg",
+        uri: photo.uri,
+        name: "photo.jpg",
+        type: "image/jpeg",
     });
+  }
 
-    try {
-      const res = await fetch("http://192.168.1.228:3000/upload", {
-        method: "POST",
-        body: formData,
-      });
+  const res = await fetch("http://192.168.1.228:3000/upload", {
+    method: "POST",
+    body: formData,
+  });
 
-      const data = await res.json();
-      alert("Upload success:\n" + data.url);
-    } catch (err) {
-      console.error(err);
-      alert("Upload failed");
-    }
+  const data = await res.json();
+  setUploading(false);
+};
 
-    setUploading(false);
-  };
 
   if (photo) {
     return (
@@ -78,9 +80,9 @@ export default function MainApp() {
         <Image source={{ uri: photo.uri }} style={styles.preview} />
 
         <View style={styles.controls}>
-          <Button title="Upload" onPress={uploadPhoto} disabled={uploading} />
-          <View style={{ height: 10 }} />
-          <Button title="Retake" onPress={() => setPhoto(null)} />
+            <Button title="Upload" onPress={uploadPhoto} disabled={uploading} />
+            <View style={{ height: 10 }} />
+            <Button title="Retake" onPress={() => setPhoto(null)} />
         </View>
       </SafeAreaView>
     );
